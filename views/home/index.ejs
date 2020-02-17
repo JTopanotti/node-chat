@@ -1,1 +1,16 @@
-<h1>Node-chat</h1>
+<% include ../header %>
+<header>
+    <h1>Node-Chat</h1>
+    <h4>Bem vindo!</h4>
+</header>
+<section>
+    <form action="/entrar" method="post">
+        <input type="text" name="usuario[nome]"
+                placeholder="Digite o nome">
+        <br>
+        <input type="text" name="usuario[email]"
+                placeholder="Digite o email">
+        <button type="submit">Entrar</button>
+    </form>
+</section>
+<% include ../footer %>
