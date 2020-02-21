@@ -1,0 +1,26 @@
+<% include ../header %>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:3000');
+    socket.on('send-client', (msg) => {
+       document.getElementById('chat').innerHTML = msg;
+    });
+    console.log("Passou");
+    var enviarMsg = function() {
+        var nome = document.getElementById('nome').value,
+            msg = document.getElementById('msg').value;
+        console.log("Msg:" + msg);
+        socket.emit('send-server', {nome: nome, msg: msg});
+    };
+</script>
+<header>
+    <h2>Node-chat</h2>
+</header>
+<section>
+    <pre id="chat"></pre>
+    <input type="hidden" id="nome" value="<%- usuario.nome %>">
+    <input type="text" id="msg" placeholder="Mensagem">
+    <button onclick="enviarMsg();">Enviar</button>
+</section>
+<% include ../exit %>
+<% include ../footer %>

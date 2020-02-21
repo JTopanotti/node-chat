@@ -5,7 +5,9 @@ var express = require("express"),
     cookieParser = require("cookie-parser"),
     session = require("express-session"),
     bodyParser = require("body-parser")
-    methodOverride = require("method-override");
+    methodOverride = require("method-override"),
+    server = require("http").createServer(app),
+    io = require("socket.io").listen(server);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -24,6 +26,15 @@ load('models')
 app.use(error.notFound);
 app.use(error.serverError);    
 
-app.listen(3000, () => {
+io.sockets.on('connection', (client) => {
+    console.log("User connected!");
+    client.on('send-server', (data) => {
+        var msg = "<b>"+data.nome+":</b> "+data.msg+"<br>";
+        client.emit('send-client', msg);
+        client.broadcast.emit('send-client', msg);
+    });
+});
+
+server.listen(3000, () => {
     console.log("Node-chat online.");
 });

@@ -2,7 +2,7 @@ module.exports = (app) => {
     var ContatoController = {
         index: (req, res) => {
             var usuario = req.session.usuario,
-                contatos = req.session.contatos,
+                contatos = usuario.contatos,
                 params = {usuario: usuario, 
                           contatos: contatos};
             res.render('contatos/index', params);
