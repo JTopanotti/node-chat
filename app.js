@@ -1,3 +1,4 @@
+const KEY = 'nodechat.sid', SECRET = 'nodechat';
 var express = require("express"),
     app = express()
     load = require("express-load"),
@@ -7,12 +8,17 @@ var express = require("express"),
     bodyParser = require("body-parser")
     methodOverride = require("method-override"),
     server = require("http").createServer(app),
-    io = require("socket.io").listen(server);
+    io = require("socket.io").listen(server),
+    
+    cookie = cookieParser(SECRET),
+    store = new session.MemoryStore(),
+    sessOpts = {secret: SECRET, key: KEY, store: store},
+    session =  session(sessOpts);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(cookieParser('node-chat'));
-app.use(session());
+app.use(cookie);
+app.use(session);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(methodOverride());
@@ -22,16 +28,26 @@ load('models')
     .then('controllers')
     .then('routes')
     .into(app);
+load('sockets')
+    .into(io);
 
 app.use(error.notFound);
 app.use(error.serverError);    
 
-io.sockets.on('connection', (client) => {
-    console.log("User connected!");
-    client.on('send-server', (data) => {
-        var msg = "<b>"+data.nome+":</b> "+data.msg+"<br>";
-        client.emit('send-client', msg);
-        client.broadcast.emit('send-client', msg);
+io.set('authorization', function(data, accept) {
+    cookie(data, {}, function(err) {
+        var sessionID = data.signedCookies[KEY];
+        console.log(sessionID);
+        store.get(sessionID, function(err, session) {
+            if (err || !session) {
+                console.log('nonaccept')
+                accept(null, false);
+            } else {
+                console.log('accept')
+                data.session = session;
+                accept(null, true)
+            }
+        })
     });
 });
 

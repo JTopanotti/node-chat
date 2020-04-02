@@ -7,10 +7,8 @@
     });
     console.log("Passou");
     var enviarMsg = function() {
-        var nome = document.getElementById('nome').value,
-            msg = document.getElementById('msg').value;
-        console.log("Msg:" + msg);
-        socket.emit('send-server', {nome: nome, msg: msg});
+        var msg = document.getElementById('msg').value;
+        socket.emit('send-server', msg);
     };
 </script>
 <header>
@@ -18,7 +16,6 @@
 </header>
 <section>
     <pre id="chat"></pre>
-    <input type="hidden" id="nome" value="<%- usuario.nome %>">
     <input type="text" id="msg" placeholder="Mensagem">
     <button onclick="enviarMsg();">Enviar</button>
 </section>
