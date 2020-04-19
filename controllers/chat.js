@@ -1,8 +1,8 @@
 module.exports = (app) => {
    var ChatController = {
        index: (req, res) => {
-           var resultado = {email: req.params.email};
-            res.render('chat/index', resultado);
+           var params = {email: req.params.email};
+           res.render('chat/index', params);
        }
    } 
    return ChatController;

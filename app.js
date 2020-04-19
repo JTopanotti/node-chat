@@ -9,11 +9,14 @@ var express = require("express"),
     methodOverride = require("method-override"),
     server = require("http").createServer(app),
     io = require("socket.io").listen(server),
+    mongoose = require("mongoose"),
     
     cookie = cookieParser(SECRET),
     store = new session.MemoryStore(),
     sessOpts = {secret: SECRET, key: KEY, store: store},
     session =  session(sessOpts);
+
+global.db = mongoose.connect("mongodb://localhost/nodechat");
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -37,17 +40,14 @@ app.use(error.serverError);
 io.set('authorization', function(data, accept) {
     cookie(data, {}, function(err) {
         var sessionID = data.signedCookies[KEY];
-        console.log(sessionID);
         store.get(sessionID, function(err, session) {
             if (err || !session) {
-                console.log('nonaccept')
                 accept(null, false);
             } else {
-                console.log('accept')
                 data.session = session;
                 accept(null, true)
             }
-        })
+        });
     });
 });
 
