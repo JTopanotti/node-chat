@@ -8,5 +8,6 @@ module.exports = function(io) {
             client.emit('send-client', msg);
             client.broadcast.emit('send-client', msg);
         });
+        
     });
 }
